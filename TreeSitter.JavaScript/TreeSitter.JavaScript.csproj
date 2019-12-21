@@ -9,7 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="tree-sitter-javascript.so">
+      <None Update="tree-sitter-javascript.so" Pack="True">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

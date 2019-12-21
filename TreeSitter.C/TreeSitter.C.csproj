@@ -9,7 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="tree-sitter-c.so">
+      <None Update="tree-sitter-c.so" Pack="True">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
