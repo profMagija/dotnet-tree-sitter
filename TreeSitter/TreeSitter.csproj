@@ -10,11 +10,14 @@
         <PackageId>TreeSitter</PackageId>
         <Version>1.0.0</Version>
         <Authors>Nikola Bebić</Authors>
+        <PackageLicenseUrl>..\LICENCE</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/profmagija/dotnet-tree-sitter</PackageProjectUrl>
     </PropertyGroup>
     
     <ItemGroup>
-      <None Update="tree-sitter.so" Pack="True">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <None Update="tree-sitter.so">
+          <Pack>True</Pack>
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 
