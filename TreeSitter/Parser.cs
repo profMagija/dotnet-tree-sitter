@@ -1,4 +1,7 @@
 using System;
+using System.Runtime.InteropServices;
+using System.Text;
+using TreeSitter.Native;
 using static TreeSitter.Native.Native;
 
 namespace TreeSitter
@@ -24,11 +27,22 @@ namespace TreeSitter
 
         public Tree Parse(string text, Tree oldTree = null)
         {
-            return new Tree(ts_parser_parse_string(
-                _handle,
-                oldTree?.Handle ?? IntPtr.Zero,
-                text,
-                (uint) text.Length));
+            var bytes = Encoding.UTF8.GetBytes(text);
+
+            return Parse(bytes, InputEncoding.Utf8, oldTree);
+        }
+
+        public unsafe Tree Parse(byte[] bytes, InputEncoding encoding, Tree oldTree = null)
+        {
+            fixed (byte* ptr = bytes)
+            {
+                return new Tree(ts_parser_parse_string_encoding(
+                    _handle,
+                    oldTree?.Handle ?? IntPtr.Zero,
+                    new IntPtr(ptr),
+                    (uint) bytes.Length,
+                    (TsInputEncoding) encoding));
+            }
         }
 
         public void Reset()
@@ -41,5 +55,11 @@ namespace TreeSitter
         {
             ts_parser_delete(_handle);
         }
+    }
+
+    public enum InputEncoding
+    {
+        Utf8,
+        Utf16
     }
 }

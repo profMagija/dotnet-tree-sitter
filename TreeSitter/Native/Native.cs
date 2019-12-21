@@ -30,8 +30,7 @@ namespace TreeSitter.Native
         public uint end_byte;
     }
     
-    [return: MarshalAs(UnmanagedType.LPStr)]
-    internal delegate string TsReadDelegate(IntPtr payload, uint byteIndex, TsPoint position, out uint bytesRead);
+    internal delegate IntPtr TsReadDelegate(IntPtr payload, uint byteIndex, TsPoint position, out uint bytesRead);
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct TsInput
@@ -47,8 +46,7 @@ namespace TreeSitter.Native
         Lex
     }
     
-    internal delegate void TsLogDelegate(IntPtr payload, TsLogType logType, 
-        [MarshalAs(UnmanagedType.LPStr)] string data); 
+    internal delegate void TsLogDelegate(IntPtr payload, TsLogType logType, IntPtr data); 
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct TsLogger
@@ -162,8 +160,7 @@ namespace TreeSitter.Native
         internal static extern IntPtr ts_parser_parse_string(
             IntPtr self,
             IntPtr oldTree,
-            [MarshalAs(UnmanagedType.LPStr, SizeParamIndex = 3)]
-            string input,
+            IntPtr input,
             uint length
         );
 
@@ -171,8 +168,7 @@ namespace TreeSitter.Native
         internal static extern IntPtr ts_parser_parse_string_encoding(
             IntPtr self,
             IntPtr oldTree,
-            [MarshalAs(UnmanagedType.LPStr, SizeParamIndex = 3)]
-            string input,
+            IntPtr input,
             uint length,
             TsInputEncoding encoding
         );
@@ -331,8 +327,7 @@ namespace TreeSitter.Native
         [DllImport(DllName)]
         internal static extern TsNode ts_node_child_by_field_name(
             TsNode node,
-            [MarshalAs(UnmanagedType.LPStr, SizeParamIndex = 2)]
-            string fieldName,
+            IntPtr fieldName,
             uint fieldNameLength
         );
 
@@ -490,7 +485,7 @@ namespace TreeSitter.Native
         [DllImport(DllName)]
         public static extern ushort ts_language_symbol_for_name(
             IntPtr language,
-            string name,
+            IntPtr name,
             uint length,
             bool isNamed
         );
@@ -509,7 +504,7 @@ namespace TreeSitter.Native
         [DllImport(DllName)]
         public static extern ushort ts_language_field_id_for_name(
             IntPtr language,
-            string name,
+            IntPtr name,
             uint length
         );
         

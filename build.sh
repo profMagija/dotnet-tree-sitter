@@ -6,7 +6,7 @@ so="so"
 native_lib_dir="tree-sitter/lib/src"
 dotnet_lib_dir="TreeSitter"
 
-gcc -fPIC -shared -o $dotnet_lib_dir/tree-sitter.$so $native_lib_dir/lib.c -I$native_lib_dir -I$native_lib_dir/../include
+gcc -fPIC -shared -o $dotnet_lib_dir/tree-sitter.$so $native_lib_dir/lib.c free.c -I$native_lib_dir -I$native_lib_dir/../include
 
 # build C language
 
@@ -21,6 +21,13 @@ native_dir="langs-native/tree-sitter-javascript/src"
 dotnet_dir="TreeSitter.JavaScript"
 
 gcc -fPIC -shared -o $dotnet_dir/tree-sitter-javascript.$so $native_dir/parser.c $native_dir/scanner.c -I$native_dir
+
+# build python language
+
+native_dir="langs-native/tree-sitter-python/src"
+dotnet_dir="TreeSitter.Python"
+
+gcc -fPIC -shared -o $dotnet_dir/tree-sitter-python.$so $native_dir/parser.c $native_dir/scanner.cc -I$native_dir
 
 # build managed things
 

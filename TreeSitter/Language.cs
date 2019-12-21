@@ -15,7 +15,9 @@ namespace TreeSitter
 
         public ushort? FieldIdForName(string fieldName)
         {
-            var id = ts_language_field_id_for_name(Handle, fieldName, (uint) fieldName.Length);
+            var ptr = Marshal.StringToHGlobalAnsi(fieldName);
+            var id = ts_language_field_id_for_name(Handle, ptr, (uint) fieldName.Length);
+            Marshal.FreeHGlobal(ptr);
             return id == 0 ? (ushort?) null : id;
         }
     }

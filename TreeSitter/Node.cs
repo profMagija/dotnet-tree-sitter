@@ -173,8 +173,13 @@ namespace TreeSitter
         /// If multiple children may have the same field name, access them using
         /// <see cref="ChildrenByFieldName"/>
         /// </remarks>
-        public Node ChildByFieldName(string fieldName) => 
-            Create(ts_node_child_by_field_name(Handle, fieldName, (uint) fieldName.Length));
+        public Node ChildByFieldName(string fieldName)
+        {
+            var ptr = Marshal.StringToHGlobalAnsi(fieldName);
+            var child = Create(ts_node_child_by_field_name(Handle, ptr, (uint) fieldName.Length));
+            Marshal.FreeHGlobal(ptr);
+            return child;
+        }
 
         /// <summary>
         /// Get this node's child with the given numerical field id.
