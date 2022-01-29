@@ -11,7 +11,9 @@ namespace TreeSitter.Native
 
     internal enum TsSymbolType
     {
-        Regular, Anonymous, Auxiliary
+        Regular,
+        Anonymous,
+        Auxiliary
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -29,7 +31,7 @@ namespace TreeSitter.Native
         public uint start_byte;
         public uint end_byte;
     }
-    
+
     internal delegate IntPtr TsReadDelegate(IntPtr payload, uint byteIndex, TsPoint position, out uint bytesRead);
 
     [StructLayout(LayoutKind.Sequential)]
@@ -45,8 +47,8 @@ namespace TreeSitter.Native
         Parse,
         Lex
     }
-    
-    internal delegate void TsLogDelegate(IntPtr payload, TsLogType logType, IntPtr data); 
+
+    internal delegate void TsLogDelegate(IntPtr payload, TsLogType logType, IntPtr data);
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct TsLogger
@@ -73,7 +75,7 @@ namespace TreeSitter.Native
         [FieldOffset(4 * 4 + 8)] public IntPtr tree;
     }
 
-    [StructLayout(LayoutKind.Explicit, Size = 8+8+2*4)]
+    [StructLayout(LayoutKind.Explicit, Size = 8 + 8 + 2 * 4)]
     internal struct TsTreeCursor
     {
         [FieldOffset(0)] public IntPtr tree;
@@ -95,7 +97,7 @@ namespace TreeSitter.Native
         public ushort capture_count;
         public IntPtr captures;
     }
-    
+
     public enum TsQueryPredicateStepType
     {
         Done,
@@ -104,7 +106,8 @@ namespace TreeSitter.Native
     };
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct TsQueryPredicateStep{
+    public struct TsQueryPredicateStep
+    {
         TsQueryPredicateStepType type;
         uint value_id;
     }
@@ -189,12 +192,29 @@ namespace TreeSitter.Native
             IntPtr self
         );
 
-        // TODO: cancelation token
+        [DllImport(DllName)]
+        internal static extern void ts_parser_set_cancellation_flag(
+            IntPtr self,
+            IntPtr flag
+        );
 
-        // TODO: logger
+        [DllImport(DllName)]
+        internal static extern void ts_parser_set_logger(
+            IntPtr self,
+            TsLogger logger
+        );
 
-        // TODO: other things
+        [DllImport(DllName)]
+        internal static extern TsLogger ts_parser_get_logger(
+            IntPtr self
+        );
 
+        [DllImport(DllName)]
+        internal static extern void ts_parser_print_dot_graphs(
+            IntPtr self,
+            int file
+        );
+        
         #endregion
 
         #region Tree
@@ -405,7 +425,6 @@ namespace TreeSitter.Native
             TsNode other
         );
 
-
         #endregion
 
         #region Tree Cursor
@@ -494,36 +513,30 @@ namespace TreeSitter.Native
         public static extern ushort ts_language_field_count(
             IntPtr language
         );
-        
+
         [DllImport(DllName)]
         public static extern IntPtr ts_language_field_name_for_id(
             IntPtr language,
             ushort fieldId
         );
-        
+
         [DllImport(DllName)]
         public static extern ushort ts_language_field_id_for_name(
             IntPtr language,
             IntPtr name,
             uint length
         );
-        
+
         [DllImport(DllName)]
         public static extern TsSymbolType ts_language_symbol_type(
             IntPtr language,
             ushort symbol
         );
-        
+
         [DllImport(DllName)]
         public static extern uint ts_language_version(
             IntPtr language
         );
-        
-        
-
-
-
-
 
         #endregion
 

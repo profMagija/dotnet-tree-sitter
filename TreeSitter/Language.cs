@@ -10,6 +10,9 @@ namespace TreeSitter
 
         public Language(IntPtr handle)
         {
+            if (handle == IntPtr.Zero)
+                throw new ArgumentNullException(nameof(handle));
+
             Handle = handle;
         }
 
