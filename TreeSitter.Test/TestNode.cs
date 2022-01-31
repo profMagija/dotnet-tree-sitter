@@ -1,8 +1,8 @@
 using NUnit.Framework;
-using TreeSitter;
 using TreeSitter.Python;
+using TreeSitter.Python.Nodes;
 
-namespace Tests
+namespace TreeSitter.Test
 {
     public class TestNode
     {
@@ -53,16 +53,33 @@ namespace Tests
             var rootNode = tree.Root;
             Assert.AreEqual("module", rootNode.Kind);
             Assert.AreEqual(0, rootNode.StartByte);
-            Assert.AreEqual(18, rootNode.EndByte);
+            Assert.AreEqual(36, rootNode.EndByte);
             Assert.AreEqual(new Point(0, 0), rootNode.StartPosition);
-            Assert.AreEqual(new Point(1, 7), rootNode.EndPosition);
+            Assert.AreEqual(new Point(1, 14), rootNode.EndPosition);
 
             var fnNode = rootNode.Child(0);
             Assert.AreEqual("function_definition", fnNode.Kind);
             Assert.AreEqual(0, fnNode.StartByte);
-            Assert.AreEqual(18, fnNode.EndByte);
+            Assert.AreEqual(36, fnNode.EndByte);
             Assert.AreEqual(new Point(0, 0), fnNode.StartPosition);
-            Assert.AreEqual(new Point(1, 7), fnNode.EndPosition);
+            Assert.AreEqual(new Point(1, 14), fnNode.EndPosition);
+        }
+
+        [Test]
+        public void TestNodeConvert()
+        {
+            var language = PythonLanguage.Create();
+            var parser = new Parser
+            {
+                Language = language
+            };
+            var tree = parser.Parse("def foo():\n  bar()");
+
+            var res = PythonLanguageNode.FromNode(tree.Root);
+            Assert.IsInstanceOf<Module>(res);
+
+            var module = (Module) res!;
+            Assert.IsInstanceOf<FunctionDefinition>(module.Children[0]);
         }
     }
 }

@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TreeSitter.C\TreeSitter.C.csproj" />
     <ProjectReference Include="..\TreeSitter.JavaScript\TreeSitter.JavaScript.csproj" />
     <ProjectReference Include="..\TreeSitter.Python\TreeSitter.Python.csproj" />
     <ProjectReference Include="..\TreeSitter\TreeSitter.csproj" />

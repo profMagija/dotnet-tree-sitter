@@ -46,12 +46,19 @@ namespace TreeSitter
         /// </summary>
         /// <param name="text">source text to parse</param>
         /// <param name="oldTree">old version of the document, or <c>null</c> if this is the first time parsing it</param>
+        /// <param name="token">cancellation token to use</param>
         /// <returns>the parsed syntax tree</returns>
         public Tree Parse(string text, Tree oldTree = null, CancellationToken? token = null)
         {
-            var bytes = Encoding.UTF8.GetBytes(text);
-
-            return Parse(bytes, InputEncoding.Utf8, oldTree, token);
+            var ptr = Marshal.StringToHGlobalUni(text);
+            try
+            {
+                return ParseInternal(ptr, (uint)text.Length * 2, InputEncoding.Utf16, oldTree, token);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(ptr);
+            }
         }
 
         /// <summary>
@@ -62,7 +69,16 @@ namespace TreeSitter
         /// <param name="oldTree">old version of the document, or <c>null</c> if this is the first time parsing it</param>
         /// <param name="token">cancellation token to use</param>
         /// <returns>the parsed syntax tree</returns>
-        public unsafe Tree Parse(byte[] bytes, InputEncoding encoding, Tree oldTree = null, CancellationToken? token = null)
+        public unsafe Tree Parse(byte[] bytes, InputEncoding encoding, Tree oldTree = null,
+            CancellationToken? token = null)
+        {
+            fixed (byte* ptr = bytes)
+            {
+                return ParseInternal(new IntPtr(ptr), (uint) bytes.LongLength, encoding, oldTree, token);
+            }
+        }
+
+        private unsafe Tree ParseInternal(IntPtr input, uint length, InputEncoding encoding, Tree oldTree, CancellationToken? token)
         {
             var cancelFlag = 0L;
             CancellationTokenRegistration? registration = null;
@@ -76,21 +92,18 @@ namespace TreeSitter
 
             try
             {
-                fixed (byte* ptr = bytes)
-                {
-                    var result = ts_parser_parse_string_encoding(
-                        _handle,
-                        oldTree?.Handle ?? IntPtr.Zero,
-                        new IntPtr(ptr),
-                        (uint) bytes.Length,
-                        (TsInputEncoding) encoding
-                    );
+                var result = ts_parser_parse_string_encoding(
+                    _handle,
+                    oldTree?.Handle ?? IntPtr.Zero,
+                    input,
+                    length,
+                    (TsInputEncoding) encoding
+                );
 
-                    if (result == IntPtr.Zero)
-                        throw new TaskCanceledException("parsing canceled");
+                if (result == IntPtr.Zero)
+                    throw new TaskCanceledException("parsing canceled");
 
-                    return new Tree(result);
-                }
+                return new Tree(result);
             }
             finally
             {

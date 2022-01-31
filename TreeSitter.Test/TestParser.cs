@@ -1,12 +1,10 @@
-using System;
 using System.Text;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
-using TreeSitter;
 using TreeSitter.JavaScript;
 using TreeSitter.Python;
+using Regex = System.Text.RegularExpressions.Regex;
 
-namespace Tests
+namespace TreeSitter.Test
 {
     public class TestParser
     {

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace TreeSitter.JavaScript
 {
-    public class JavaScriptLanguage
+    public static class JavaScriptLanguage
     {    
         private const string DllName = "tree-sitter-javascript";
 

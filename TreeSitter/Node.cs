@@ -205,7 +205,7 @@ namespace TreeSitter
                     var result = cursor.Current;
                     cursor.GotoNextSibling();
                     return result;
-                });
+                }).Finally(cursor.Dispose);
             }
         }
 
@@ -226,7 +226,7 @@ namespace TreeSitter
                     var key = cursor.FieldName;
                     cursor.GotoNextSibling();
                     return new KeyValuePair<string, Node>(key, result);
-                });
+                }).Finally(cursor.Dispose);
             }
         }
 
@@ -241,22 +241,24 @@ namespace TreeSitter
 
         public IEnumerable<Node> ChildrenByFieldId(ushort fieldId)
         {
-            var cursor = new TreeCursor(this);
-            cursor.GotoFirstChild();
-
-            var done = false;
-            while (!done)
+            using (var cursor = new TreeCursor(this))
             {
-                while (cursor.FieldId != fieldId)
+                cursor.GotoFirstChild();
+
+                var done = false;
+                while (!done)
+                {
+                    while (cursor.FieldId != fieldId)
+                        if (!cursor.GotoNextSibling())
+                            yield break;
+
+                    var result = cursor.Current;
+
                     if (!cursor.GotoNextSibling())
-                        yield break;
+                        done = true;
 
-                var result = cursor.Current;
-
-                if (!cursor.GotoNextSibling())
-                    done = true;
-
-                yield return result;
+                    yield return result;
+                }
             }
         }
 
@@ -301,6 +303,22 @@ namespace TreeSitter
         public override int GetHashCode()
         {
             return Handle.id.ToInt32();
+        }
+    }
+
+    public static class EnumerableExtensions
+    {
+        public static IEnumerable<T> Finally<T>(this IEnumerable<T> enumerable, Action after)
+        {
+            try
+            {
+                foreach (var value in enumerable)
+                    yield return value;
+            }
+            finally
+            {
+                after();
+            }
         }
     }
 }
