@@ -62,3 +62,10 @@ Debug.Assert(tree.Root.ToString() == Trim(
 ```
 
 (`Trim` is a utility function that replaces multiple whicespace characters with a single space).
+
+## Integrating with a new language
+
+1. Compile the language native modules, as a platform-dependant (`.so`/`.dylib`/`.dll`) shared library.
+2. Declare the `[DllImport("...")] extern IntPtr tree_sitter_LANG();` function. 
+3. The `Language` constructor must be passed the `IntPtr` result of calling that function.
+4. Take a look at [CLanguage](TreeSitter.C/CLanguage.cs) class to see how it is done for the C language, including the helper `Create` function.
